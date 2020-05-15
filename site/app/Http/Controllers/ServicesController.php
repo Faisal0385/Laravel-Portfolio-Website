@@ -8,10 +8,6 @@ class ServicesController extends Controller
 {
     //
 
-    public $table        = 'visitor';
-    public $primaryKey   = 'id';
-    public $incrementing = true;
-    public $keyType      = 'int';
-    public  $timestamps  = false;
+    
 
 }
