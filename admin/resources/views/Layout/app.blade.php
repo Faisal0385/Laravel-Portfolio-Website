@@ -41,6 +41,13 @@
 	<script src="{{asset('js/axios.min.js')}}"></script>
 
 	@yield('script')
+	<script>
+		$(document).ready(function() {
+			$('#VisitorDt').DataTable();
+			$('.dataTables_length').addClass('bs-select');
+		});
+	
+	</script>
 
 </body>
 </html>

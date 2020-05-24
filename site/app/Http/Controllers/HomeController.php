@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\VisitorModel;
 use App\ServicesModel;
+use App\CoursesModel;
 
 class HomeController extends Controller
 {
@@ -21,8 +22,9 @@ class HomeController extends Controller
         VisitorModel::insert(['ip_address' => $UserIP, 'visit_time' => $timeDate ]);
 
         $ServicesData = ServicesModel::all();
+        $CoursesData  = CoursesModel::all();
 
-        return view('Home',['ServicesData' => $ServicesData]);
+        return view('Home',['ServicesData' => $ServicesData, 'CoursesData' => $CoursesData]);
         
     }
 }

@@ -1,12 +1,6 @@
-$(document).ready(function() {
-    $('#VisitorDt').DataTable();
-    $('.dataTables_length').addClass('bs-select');
-});
+function getCoursesData() {
 
-
-function getServicesData() {
-
-    axios.get('/getServicesData')
+    axios.get('/getCoursesData')
 
         .then(function(response) {
 
@@ -14,18 +8,18 @@ function getServicesData() {
 
                 $('#mainDiv').removeClass('d-none');
                 $('#loaderDiv').addClass('d-none');
-                $('#service_table').empty();
+                $('#course_table').empty();
 
                 // handle success
                 var dataJson = response.data;
                 $.each(dataJson, function(i, item) {
                     $('<tr>').html(
-                        "<td class='th-sm' ><img class='table-img' src='" + dataJson[i].service_img + "'></td>" +
-                        "<td class='th-sm' >" + dataJson[i].service_name + "</td>" +
-                        "<td class='th-sm' >" + dataJson[i].service_des + "</td>" +
+                        "<td class='th-sm' >" + dataJson[i].course_name + "</td>" +
+                        "<td class='th-sm' >" + dataJson[i].course_des + "</td>" +
+                        "<td class='th-sm' >" + dataJson[i].course_fee + "</td>" +
                         "<td class='th-sm' ><a class='serviceEditBtn' data-id=" + dataJson[i].id + " ><i class='fas fa-edit'></i></a></td>" +
-                        "<td class='th-sm' ><a class='serviceDeleteBtn' data-id=" + dataJson[i].id + "><i class='fas fa-trash-alt'></i></a></td>"
-                    ).appendTo('#service_table');
+                        "<td class='th-sm' ><a class='courseDeleteBtn' data-id=" + dataJson[i].id + "><i class='fas fa-trash-alt'></i></a></td>"
+                    ).appendTo('#course_table');
                 });
 
             } else {
@@ -35,19 +29,19 @@ function getServicesData() {
 
             }
 
-            $('.serviceDeleteBtn').click(function() {
+            $('.courseDeleteBtn').click(function() {
                 var id = $(this).data('id');
                 $('#dataDeleteId').html(id);
-                $('#deleteModel').modal('show');
+                $('#deleteCourseModel').modal('show');
             })
 
-            $('.serviceEditBtn').click(function() {
-                var id = $(this).data('id');
-                getServicesSingleData(id);
-                $('#dataEditId').html(id);
-                $('#editModel').modal('show');
+            // $('.serviceEditBtn').click(function() {
+            //     var id = $(this).data('id');
+            //     getServicesSingleData(id);
+            //     $('#dataEditId').html(id);
+            //     $('#editModel').modal('show');
 
-            })
+            // })
 
         })
         .catch(function(error) {
@@ -59,44 +53,26 @@ function getServicesData() {
 
 }
 
-$('#serviceDeleteConfirmBtn').click(function() {
+$('#CoursesDeleteConfirmBtn').click(function() {
     var id = $('#dataDeleteId').html();
-    getServiceDelete(id);
+    getCourseDelete(id);
 });
 
-$('#serviceEditConfirmBtn').click(function() {
-    var id = $('#dataEditId').html();
-    var service_name = $('#service_name').val();
-    var service_des = $('#service_des').val();
-    var service_img = $('#service_img').val();
-    getServiceEdit(id, service_name, service_des, service_img);
-})
+function getCourseDelete(deleteID) {
 
-
-$('#serviceAddConfirmBtn').click(function() {
-    var addService_name = document.getElementById("addService_name").value;
-    var addService_des  = document.getElementById("addService_des").value;
-    var addService_img  = document.getElementById("addService_img").value;
-
-    addService(addService_name, addService_des, addService_img);
-})
-
-
-function getServiceDelete(deleteID) {
-
-    axios.post('/ServiceDelete', {
+    axios.post('/CourseDelete', {
             id: deleteID
         })
         .then(function(response) {
 
             if (response.data == 1) {
-                $('#deleteModel').modal('hide');
+                $('#deleteCourseModel').modal('hide');
                 toastr.success('Data Deleted.');
-                getServicesData();
+                getCoursesData();
             } else {
-                $('#deleteModel').modal('hide');
+                $('#deleteCourseModel').modal('hide');
                 toastr.error('Delete Failed.');
-                getServicesData();
+                getCoursesData();
             }
         })
         .catch(function(error) {
@@ -109,80 +85,46 @@ function getServiceDelete(deleteID) {
 }
 
 
-function getServicesSingleData(id) {
+$('#CourseAddConfirmBtn').click(function() {
 
-    axios.post('/getServicesSingleData', {
-            id: id
-        })
+    var CourseNameId   = document.getElementById("CourseNameId").value;
+    var CourseDesId    = document.getElementById("CourseDesId").value;
+    var CourseFeeId    = document.getElementById("CourseFeeId").value;
+    var CourseEnrollId = document.getElementById("CourseEnrollId").value;
+    var CourseClassId  = document.getElementById("CourseClassId").value;
+    var CourseLinkId   = document.getElementById("CourseLinkId").value;
+    var CourseImgId    = document.getElementById("CourseImgId").value;
 
-        .then(function(response) {
 
-            document.getElementById("service_name").value = response.data[0].service_name;
-            document.getElementById("service_des").value = response.data[0].service_des;
-            document.getElementById("service_img").value = response.data[0].service_img;
+    addCourse(CourseNameId, CourseDesId, CourseFeeId, CourseEnrollId, CourseClassId, CourseLinkId, CourseImgId);
+})
 
-        })
-        .catch(function(error) {
 
-            $('#loaderDiv').addClass('d-none');
-            $('#wrongDiv').removeClass('d-none');
+//Add Service
+function addCourse(CourseNameId, CourseDesId, CourseFeeId, CourseEnrollId,CourseClassId,CourseLinkId,CourseImgId) {
 
-        })
+    axios.post('/CourseAdd', {
 
-}
+            CourseNameId: CourseNameId,
+            CourseDesId: CourseDesId,
+            CourseFeeId: CourseFeeId,
+            CourseEnrollId: CourseEnrollId,
+            CourseClassId: CourseClassId,
+            CourseLinkId: CourseLinkId,
+            CourseImgId: CourseImgId,
 
-function getServiceEdit(editID, service_name, service_des, service_img) {
-
-    axios.post('/ServiceEdit', {
-            id: editID,
-            service_name: service_name,
-            service_des: service_des,
-            service_img: service_img
 
         })
         .then(function(response) {
 
             if (response.data == 1) {
-                $('#editModel').modal('hide');
-                toastr.success('Data Updated.');
-                getServicesData();
+                $('#addCourseBtn').modal('hide');
+                toastr.success('Course Add.');
+                getCoursesData();
             } else {
-                $('#editModel').modal('hide');
-                toastr.error('Update Failed.');
-                getServicesData();
-            }
-        })
-        .catch(function(error) {
-
-            $('#loaderDiv').addClass('d-none');
-            $('#wrongDiv').removeClass('d-none');
-
-        })
-
-}
-
-
-function addService(addService_name, addService_des, addService_img) {
-
-    axios.post('/ServiceAdd', {
-
-            service_name: addService_name,
-            service_des: addService_des,
-            service_img: addService_img
-
-        })
-        .then(function(response) {
-
-            //console.log(response.data[0]);
-
-            if (response.data == 1) {
-                $('#addServicesBtn').modal('hide');
-                toastr.success('Service Add.');
-                getServicesData();
-            } else {
-                $('#addServicesBtn').modal('hide');
+                $('#addCourseBtn').modal('hide');
                 toastr.error('Insert Data Failed.');
-                getServicesData();
+                getCoursesData();
             }
         })
         .catch(function(error) {
